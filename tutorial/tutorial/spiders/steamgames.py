@@ -2,7 +2,7 @@ import scrapy
 import re
 
 class QuotesSpider(scrapy.Spider):
-    name = "steamgames" #Crawler name
+    name = "steam" #Crawler name
     i = 1
     start_urls = [
         'https://store.steampowered.com/search/?category1=998',
@@ -17,9 +17,8 @@ class QuotesSpider(scrapy.Spider):
             # removing the spaces if it's not a number
             priceTxt = re.sub(r"[\s]", "", priceTxt)
             if(discount is not None and priceTxt == ""):
-            # if (priceTxt == ""):
                 priceTxt = re.sub(r"[\s]", "",steamgames.css("div div.discounted::text")[1].extract())
-            if (priceTxt == "FreetoPlay"):
+            if ("Free" in priceTxt):
                 priceTxt = "0,0"
             if(priceTxt != ""):
                 yield {
@@ -30,9 +29,9 @@ class QuotesSpider(scrapy.Spider):
                     }
         # Goes to next item on the list with the links, so the crawler goes to the next page
         self.i +=1
-        # # next_page = response.css('div.search_pagination_right a::attr(href)')[self.i].extract()
+        # next_page = response.css("div.search_pagination_right a.pagebtn").extract_first()
         next_page = "https://store.steampowered.com/search/?category1=998&page="+str(self.i)
-        if next_page is not None:
+        if (response.url != "https://store.steampowered.com/search/?category1=998&page=987"):
             next_page = next_page
             yield scrapy.Request(next_page, callback=self.parse)
 
