@@ -32,7 +32,6 @@ class QuotesSpider(scrapy.Spider):
             }
         # Goes to next item on the list with the links, so the crawler goes to the next page
         self.i +=1
-        # next_page = "https://www.g2a.com/pt-br/category/games?platform=" + str(self.i)
         next_page = response.urljoin(response.css("nav.pagination a.btn-next::attr(href)").extract_first())
         if (self.i <= 818):
             next_page = next_page

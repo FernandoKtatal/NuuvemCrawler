@@ -18,9 +18,9 @@ class QuotesSpider(scrapy.Spider):
             priceTxt = re.sub(r"[\s]", "", priceTxt)
             if(discount is not None and priceTxt == ""):
                 priceTxt = re.sub(r"[\s]", "",steamgames.css("div div.discounted::text")[1].extract())
-            if ("Free" in priceTxt):
+            if ("Free" in priceTxt or "Play" in priceTxt):
                 priceTxt = "0,0"
-            if(priceTxt != ""):
+            if(priceTxt != "" and priceTxt != "Third-party"):
                 yield {
                     'nameSteam': steamgames.css('div.search_name span.title::text').extract_first(),
                     'priceSteam': priceTxt,
@@ -29,9 +29,11 @@ class QuotesSpider(scrapy.Spider):
                     }
         # Goes to next item on the list with the links, so the crawler goes to the next page
         self.i +=1
-        # next_page = response.css("div.search_pagination_right a.pagebtn").extract_first()
-        next_page = "https://store.steampowered.com/search/?category1=998&page="+str(self.i)
-        if (response.url != "https://store.steampowered.com/search/?category1=998&page=987"):
+        if (self.i == 2):
+            next_page = response.css("div.search_pagination_right a.pagebtn::attr(href)").extract_first()
+        else:
+            next_page = response.css("div.search_pagination_right a.pagebtn::attr(href)")[1].extract()
+        if (next_page is not None):    
             next_page = next_page
             yield scrapy.Request(next_page, callback=self.parse)
 

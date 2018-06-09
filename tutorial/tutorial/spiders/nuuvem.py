@@ -2,10 +2,10 @@ import scrapy
 import re
 
 class QuotesSpider(scrapy.Spider):
-    name = "games" #Crawler name
+    name = "nuuvem" #Crawler name
     i = 0
     start_urls = [
-        'https://www.nuuvem.com/catalog',
+        'https://www.nuuvem.com/catalog/types/games',
     ]
     def parse(self, response):
         # gonna locate its price and check if it's a number or a string
@@ -23,10 +23,10 @@ class QuotesSpider(scrapy.Spider):
                 else:
                     priceInt = priceInt+priceDec
                 yield {
-                    'name': game.css('h3.product-title::text').extract_first(),
-                    'price': priceInt,
-                    'link': game.css('a.product-card--wrapper::attr(href)').extract_first(),
-                    'img': game.css('div.product-img img::attr(src)').extract_first()
+                    'nameNu': game.css('h3.product-title::text').extract_first(),
+                    'priceNu': priceInt,
+                    'linkNu': game.css('a.product-card--wrapper::attr(href)').extract_first(),
+                    'imgNu': game.css('div.product-img img::attr(src)').extract_first()
                 }
         # Goes to next item on the list with the links, so the crawler goes to the next page
         self.i +=1
